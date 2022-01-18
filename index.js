@@ -29,16 +29,6 @@ inquirer.prompt([
   },
   {
     type: 'input',
-    message: 'What are the steps required to install your project?',
-    name: 'installation'
-  },
-  {
-    type: 'input',
-    message: 'What are the steps required to install your project?',
-    name: 'installation'
-  },
-  {
-    type: 'input',
     message: 'Provide instructions for use.',
     name: 'usage'
   },
@@ -53,3 +43,18 @@ inquirer.prompt([
     name: 'license'
   }
 ])
+.then((response) => {
+  fs.writeFile('README.md', readmeTemp(response), (err) => err ? console.log(err) : console.log('README added!'))
+});
+
+function readmeTemp({title, description, motivation, learn, installation, usage, image, license}) {
+  return `# ${title}
+  ${description}
+  ${motivation}
+  ${learn}
+  ${installation}
+  ${usage}
+  ${image}
+  ${license}
+  `
+};
