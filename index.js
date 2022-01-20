@@ -9,6 +9,16 @@ inquirer.prompt([
   }, 
   {
     type: 'input',
+    message: 'Github username',
+    name: 'github'
+  },
+  {
+    type: 'input',
+    message: 'What is your email?',
+    name: 'email'
+  }, 
+  {
+    type: 'input',
     message: 'Description of project',
     name: 'description'
   }, 
@@ -33,28 +43,61 @@ inquirer.prompt([
     name: 'usage'
   },
   {
-    type: 'input',
-    message: 'If you have a image, type the file name with extension. EX: screenshot.png',
-    name: 'image'
-  },
-  {
-    type: 'input',
-    message: 'What license do you have? EX: MIT License',
-    name: 'license'
+    type: 'list',
+    message: 'What license do you have?',
+    name: 'license',
+    choices: ['MIT License', 'Apache License', 'GNU GPLv3', 'The Unlicense']
   }
 ])
 .then((response) => {
-  fs.writeFile('README.md', readmeTemp(response), (err) => err ? console.log(err) : console.log('README added!'))
+
+  let licenseBadge;
+
+  switch (response.license) {
+    case 'MIT License':
+      licenseBadge = '[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)';
+      break;
+    case 'Apache License':
+      licenseBadge = '[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)';
+      break;
+    case 'GNU GPLv3':
+      licenseBadge = '[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)';
+      break;
+    case 'The Unlicense':
+      licenseBadge = '[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)';
+      break;
+  }
+
+  fs.writeFile('README.md', readmeTemp(response, licenseBadge), (err) => err ? console.log(err) : console.log('README added!'))
 });
 
-function readmeTemp({title, description, motivation, learn, installation, usage, image, license}) {
+function readmeTemp({title, github, email, description, motivation, learn, installation, usage, license}, licenseBadge) {
   return `# ${title}
-  ${description}
-  ${motivation}
-  ${learn}
+  ${licenseBadge}
+
+  ## Description
+  - ${description}
+  - ${motivation}
+  - ${learn}
+
+  ## Table of Contents
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [License](#license)
+  - [Questions](#questions)
+
+  ## Installation
   ${installation}
+
+  ## Usage
   ${usage}
-  ${image}
-  ${license}
+
+  ## License
+  This project is covered under ${license}.
+
+  ## Questions
+  For any questions feel free to reach out:
+  - Email: [${email}](mailto:${email})
+  - [Github](https://github.com/${github})
   `
 };
